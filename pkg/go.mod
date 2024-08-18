@@ -1,4 +1,4 @@
-module ops
+module github.com/rebirthmonkey/ops
 
 go 1.21.4
 
