@@ -66,4 +66,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/rebirthmonkey/ops/pkg => ../pkg
+//replace github.com/rebirthmonkey/ops/pkg => ../pkg
