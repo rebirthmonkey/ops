@@ -4,25 +4,19 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/spf13/viper"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
 
 	"app1/internal/app/apis/auth"
 	"app1/internal/app/apis/group"
 	"app1/internal/app/apis/user"
-	mysqlDriver "app1/pkg/mysql"
-	redisDriver "app1/pkg/redis"
-	"app1/pkg/utils"
+	"github.com/rebirthmonkey/ops/pkg/app"
+	"github.com/rebirthmonkey/ops/pkg/utils"
 )
 
 func main() {
-	utils.InitConfig()
+	//utils.InitConfig()
 
-	mysqlDB := mysqlDriver.ConnectMySQL(viper.GetString("mysql.host"), viper.GetString("mysql.port"), viper.GetString("mysql.dbname"), viper.GetString("mysql.user"), viper.GetString("mysql.password"))
-	defer mysqlDB.Close() // 确保在程序退出前关闭数据库连接
-
-	redisDB := redisDriver.ConnectRedis(viper.GetString("redis.addr"), viper.GetString("redis.password"), viper.GetInt("redis.db"))
-	defer redisDB.Close() // 确保在程序退出前关闭数据库连接
+	app := app.NewApp("app1")
 
 	// 设置 Gin 路由
 	r := gin.Default()
