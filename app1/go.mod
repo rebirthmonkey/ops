@@ -1,13 +1,13 @@
 module github.com/rebirthmonkey/ops/app1
 
-go 1.21.4
+go 1.22.0
 
 require (
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-sql-driver/mysql v1.7.1
-	github.com/rebirthmonkey/ops/pkg v0.0.2
+	github.com/rebirthmonkey/ops/pkg v0.0.0-20240818112507-47c08c9cb570
 	github.com/spf13/viper v1.19.0
 	github.com/zsais/go-gin-prometheus v0.1.0
 )
