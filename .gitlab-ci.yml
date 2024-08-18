@@ -1,0 +1,58 @@
+stages:
+  - app1-build
+  - app1-deploy
+#  - app2-build
+#  - app2-deploy
+
+app1_build:
+  stage: app1-build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  before_script:
+    - mkdir -p /kaniko/.docker/
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\",\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+  script:
+    - /kaniko/executor --dockerfile=build/Dockerfile --context=$(pwd)/app1 --destination=registry.rebirthmonkey.com/lab/cloud-product/app1:v1.0.0
+
+app1_deploy:
+  image: wukongsun/google-cloud-sdk-kubectl-helm:v1.0.0
+  stage: app1-deploy
+  before_script:
+    - echo $GKE_KEY | base64 -d > gke-key.json  # 解码密钥
+    - gcloud auth activate-service-account --key-file gke-key.json  # 认证 GCP
+    - gcloud container clusters get-credentials ruan-tmigrate --zone asia-southeast1-a --project tencent-gcp-tci-pts  # 连接到 GKE 集群
+  script:
+    - helm -n app1 uninstall app1  # 卸载旧版本
+    - helm -n app1 upgrade --install app1 $(pwd)/app1/manifests/helm --values $(pwd)/app1/manifests/helm/values-gke.yaml  # 使用本地 Helm chart 部署
+  after_script:
+    - rm gke-key.json  # 清理密钥文件
+
+#app2_build:
+#  stage: app2-build
+#  image:
+#    name: gcr.io/kaniko-project/executor:debug
+#    entrypoint: [""]
+#  before_script:
+#    - mkdir -p /kaniko/.docker/
+#    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\",\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+#  script:
+#    - /kaniko/executor --dockerfile=build/Dockerfile --context=$(pwd)/app2 --destination=registry.rebirthmonkey.com/lab/cloud-product/app2:v0.0.1
+#
+#app2_deploy:
+#  image: google/cloud-sdk:alpine
+#  stage: app2-deploy
+#  before_script:
+#    - apk add --no-cache curl
+#    - curl -LO https://get.helm.sh/helm-v3.6.0-linux-amd64.tar.gz  # 下载 Helm（确保版本匹配你的需要）
+#    - tar -zxvf helm-v3.6.0-linux-amd64.tar.gz
+#    - mv linux-amd64/helm /usr/local/bin/helm
+#    - gcloud components install gke-gcloud-auth-plugin
+#    - gcloud components install kubectl
+#  script:
+#    - echo $GKE_KEY | base64 -d > gke-key.json  # 解码密钥
+#    - gcloud auth activate-service-account --key-file gke-key.json  # 认证 GCP
+#    - gcloud container clusters get-credentials ruan-tmigrate --zone asia-southeast1-a --project tencent-gcp-tci-pts  # 连接到 GKE 集群
+#    - helm upgrade --install app2-release $(pwd)/app2/manifests/helm --namespace default --values $(pwd)/app2/manifests/helm/values.yaml  # 使用本地 Helm chart 部署
+#  after_script:
+#    - rm gke-key.json  # 清理密钥文件

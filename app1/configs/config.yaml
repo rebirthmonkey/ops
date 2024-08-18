@@ -1,0 +1,14 @@
+mysql:
+  host: host.docker.internal # for Docker Desktop
+  port: 3306
+  user: root
+  password: P@ssw0rd
+  dbname: app1
+
+redis:
+  addr: host.docker.internal:6379 # for Docker Desktop
+  password: P@ssw0rd
+  db: 0
+
+log:
+  filePath: "/tmp/app.log"

@@ -1,0 +1,16 @@
+80_tools/40_terraform/10_basics/11_az/10_list/.terraform/providers/registry.terraform.io/tencentcloudstack/tencentcloud/1.78.5/darwin_amd64/terraform-provider-tencentcloud_v1.78.5 filter=lfs diff=lfs merge=lfs -text
+80_tools/40_terraform/10_basics/31_instance/10_list/.terraform/providers/registry.terraform.io/tencentcloudstack/tencentcloud/1.78.5/darwin_amd64/terraform-provider-tencentcloud_v1.78.5 filter=lfs diff=lfs merge=lfs -text
+. filter=lfs diff=lfs merge=lfs -text
+80_tools/40_terraform/10_basics/10_region/10_list/.terraform/providers/registry.terraform.io/tencentcloudstack/tencentcloud/1.60.18/darwin_amd64/terraform-provider-tencentcloud_v1.60.18 filter=lfs diff=lfs merge=lfs -text
+10_tencent/50_computing/default.etcd/member/wal/0.tmp filter=lfs diff=lfs merge=lfs -text
+80_tools/40_terraform/10_basics/16_sg/10_list/.terraform/providers/registry.terraform.io/tencentcloudstack/tencentcloud/1.60.20/darwin_amd64/terraform-provider-tencentcloud_v1.60.20 filter=lfs diff=lfs merge=lfs -text
+80_tools/40_terraform/10_basics/20_vpc/12_info/.terraform/providers/registry.terraform.io/tencentcloudstack/tencentcloud/1.60.20/darwin_amd64/terraform-provider-tencentcloud_v1.60.20 filter=lfs diff=lfs merge=lfs -text
+File filter=lfs diff=lfs merge=lfs -text
+80_tools/40_terraform filter=lfs diff=lfs merge=lfs -text
+*_v1.60.20 filter=lfs diff=lfs merge=lfs -text
+*_v1.78.5 filter=lfs diff=lfs merge=lfs -text
+*1.78.5 filter=lfs diff=lfs merge=lfs -text
+*/terraform/* filter=lfs diff=lfs merge=lfs -text
+*/.terraform/* filter=lfs diff=lfs merge=lfs -text
+80_tools/40_terraform/10_basics/30_image/10_list/.terraform/providers/registry.terraform.io/tencentcloudstack/tencentcloud/1.60.20/darwin_amd64/terraform-provider-tencentcloud_v1.60.20 filter=lfs diff=lfs merge=lfs -text
+webapp/reactapp-complete.tar.gz filter=lfs diff=lfs merge=lfs -text
