@@ -23,6 +23,10 @@ func SetupLogger(logFilePath string) io.Writer {
 	return Logger.Out
 }
 
+func Infof(format string, args ...interface{}) {
+	Logger.Infof(format, args)
+}
+
 func Infoln(args ...interface{}) {
 	Logger.Infoln(args)
 }

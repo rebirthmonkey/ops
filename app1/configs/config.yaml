@@ -12,3 +12,12 @@ redis:
 
 log:
   filePath: "/tmp/app.log"
+
+gin:
+  bind-address: 0.0.0.0 # 如需要在 Docker 中运行，需设置为 0.0.0.0 表示使用全部网络接口，默认为 127.0.0.1
+  bind-port: 8888 # 提供非安全认证的监听端口，默认为 8080
+  mode: debug # server mode: release, debug, test，默认 release
+  healthz: true # 是否开启健康检查，如果开启会安装 /healthz 路由，默认 true
+  #    middlewares: recovery,logger,secure,nocache,cors,dump # 加载的 gin 中间件列表，多个中间件，逗号(,)隔开
+  middlewares: recovery,secure,nocache,cors,dump # 加载的 gin 中间件列表，多个中间件，逗号(,)隔开
+
