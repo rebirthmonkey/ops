@@ -2,14 +2,13 @@ package app
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
-
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 
-	mysqlDriver "github/rebirthmonkey/ops/pkg/mysql"
-	redisDriver "github/rebirthmonkey/ops/pkg/redis"
+	"github.com/rebirthmonkey/ops/pkg/log"
+	mysqlDriver "github.com/rebirthmonkey/ops/pkg/mysql"
+	redisDriver "github.com/rebirthmonkey/ops/pkg/redis"
+	"github.com/rebirthmonkey/ops/pkg/utils"
 )
 
 // App is the main structure of a cli application.
@@ -28,7 +27,7 @@ func NewApp(name string) *App {
 		name: name,
 	}
 
-	InitConfig()
+	utils.InitConfig()
 
 	mysqlDB := mysqlDriver.ConnectMySQL(viper.GetString("mysql.host"), viper.GetString("mysql.port"), viper.GetString("mysql.dbname"), viper.GetString("mysql.user"), viper.GetString("mysql.password"))
 	defer mysqlDB.Close() // 确保在程序退出前关闭数据库连接
@@ -41,8 +40,5 @@ func NewApp(name string) *App {
 
 // Run is used to launch the application.
 func (a *App) Run() {
-	if err := a.cmd.Execute(); err != nil {
-		fmt.Printf("%v %v\n", color.RedString("Error:"), err)
-		os.Exit(1)
-	}
+	log.Infoln("App Run")
 }

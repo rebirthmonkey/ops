@@ -4,13 +4,13 @@ import (
 	"net"
 	"os"
 
-	"app1/pkg/logging"
+	"github.com/rebirthmonkey/ops/pkg/log"
 )
 
 func GetIPAddress() string {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		logging.Logger.Fatalln("GetIPAddress error: ", err)
+		log.Logger.Fatalln("GetIPAddress error: ", err)
 		os.Exit(1)
 	}
 

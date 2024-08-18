@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 
-	"app1/pkg/logging"
+	"github.com/rebirthmonkey/ops/pkg/log"
 )
 
 func ConnectRedis(redisAddr, redisPassword string, redisDB int) *redis.Client {
@@ -17,7 +17,7 @@ func ConnectRedis(redisAddr, redisPassword string, redisDB int) *redis.Client {
 
 	_, err := client.SMembers(context.Background(), "groupset").Result()
 	if err != nil {
-		logging.Logger.Errorln("ConnectRedis executing Redis query Error: ", err)
+		log.Errorln("ConnectRedis executing Redis query Error: ", err)
 		panic(err)
 	}
 	return client
