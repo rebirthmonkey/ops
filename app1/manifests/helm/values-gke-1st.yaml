@@ -23,8 +23,8 @@ configmap:
 imageCredentials:
   secretName: registry-secret
   registry: registry.rebirthmonkey.com
-  username: ci
-  password: glpat-GJgor1-ECE72BAinrP8S
+  username: ruan
+  password: glpat-pabJq3S_c_VzhYkMHa-a
 
 
 deployment:
@@ -33,8 +33,9 @@ deployment:
   image:
     # Change the image to your own repository's image
 #    repository: registry.rebirthmonkey.com/lab/cloud-product/app1
-    repository: wukongsun/app1
-    pullPolicy: IfNotPresent
+#    repository: wukongsun/app1
+    repository: registry.rebirthmonkey.com/ops/ops/app1
+    pullPolicy: Always
     tag: v1.0.0
 
 #  imagePullSecrets: []

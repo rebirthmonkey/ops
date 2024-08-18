@@ -15,7 +15,8 @@ spec:
         k8s-app: app
     spec:
       containers:
-        - image: wukongsun/app1:v1.0.0
+#        - image: wukongsun/app1:v1.0.0
+        - image: registry.rebirthmonkey.com/ops/ops/app1:v1.0.0
           imagePullPolicy: IfNotPresent
           name: app
           ports:

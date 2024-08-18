@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-sql-driver/mysql v1.7.1
-	github.com/rebirthmonkey/ops/pkg v0.0.0-20240818112507-47c08c9cb570
+	github.com/rebirthmonkey/ops v0.0.4
 	github.com/spf13/viper v1.19.0
 	github.com/zsais/go-gin-prometheus v0.1.0
 )

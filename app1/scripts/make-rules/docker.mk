@@ -2,12 +2,12 @@
 # Docker & K8s options
 
 #REGISTRY_PREFIX ?= ruan-nj.tencentcloudcr.com/tamlab/repo
-REGISTRY_PREFIX ?= registry.rebirthmonkey.com/lab/cloud-product
+REGISTRY_PREFIX ?= registry.rebirthmonkey.com/ops/ops
 #REGISTRY_PREFIX ?= wukongsun
 IMAGE := app1
 IMAGE_VERSION := v1.0.0
 
-NAMESPACE ?= default
+NAMESPACE ?= $(IMAGE)
 
 # ==============================================================================
 # Targets
@@ -40,6 +40,10 @@ k8s.run:
 	@kubectl -n $(NAMESPACE) apply -f $(ROOT_DIR)/manifests/k8s/local/deployment.yaml
 	@kubectl -n $(NAMESPACE) apply -f $(ROOT_DIR)/manifests/k8s/local/svc.yaml
 
+.PHONY: helm.run
+helm.run:
+	@echo "===========> Running Local Helm $(REGISTRY_PREFIX)/$(IMAGE):$(IMAGE_VERSION)"
+	@helm -n $(NAMESPACE) install $(IMAGE) ./manifests/helm -f ./manifests/helm/values-gke.yaml
 
 .PHONY: k8s.clean
 k8s.clean:
@@ -48,3 +52,7 @@ k8s.clean:
 	@kubectl -n $(NAMESPACE) delete -f $(ROOT_DIR)/manifests/k8s/local/deployment.yaml
 	@kubectl -n $(NAMESPACE) delete configmap vol-config
 
+.PHONY: helm.clean
+helm.clean:
+	@echo "===========> Cleaning Helm $(REGISTRY_PREFIX)/$(IMAGE)-$(ARCH):$(IMAGE_VERSION)"
+	@helm -n $(NAMESPACE) uninstall $(IMAGE)

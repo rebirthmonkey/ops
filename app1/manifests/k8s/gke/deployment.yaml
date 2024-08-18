@@ -18,8 +18,9 @@ spec:
         - name: registry-secret
       containers:
 #        - image: registry.rebirthmonkey.com/lab/cloud-product/app1:v1.0.0
-        - image: wukongsun/app1:v1.0.0
-          imagePullPolicy: IfNotPresent
+#        - image: wukongsun/app1:v1.0.0
+        - image: registry.rebirthmonkey.com/ops/ops/app1:v1.0.0
+          imagePullPolicy: Always
           name: app
           ports:
             - containerPort: 8888

@@ -67,11 +67,25 @@ run-k8s-without-build:
 	@echo "===========> Running Kubernetes without build"
 	@$(MAKE) k8s.run
 
+.PHONY: run-helm
+run-helm: build-docker
+	@echo "===========> Running Helm"
+	@$(MAKE) helm.run
+
+.PHONY: run-helm-without-build
+run-helm-without-build:
+	@echo "===========> Running Helm without build"
+	@$(MAKE) helm.run
+
 .PHONY: clean-k8s
 clean-k8s:
 	@echo "===========> Cleaning all local k8s"
 	@$(MAKE) k8s.clean
 
+.PHONY: clean-helm
+clean-helm:
+	@echo "===========> Cleaning Helm"
+	@$(MAKE) helm.clean
 
 # ==============================================================================
 # Test
