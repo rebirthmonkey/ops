@@ -9,25 +9,26 @@ import (
 )
 
 type Server struct {
-	Address     string
-	Middlewares []string
-	Healthz     bool
+	//Address     string
+	//Middlewares []string
+	//Healthz     bool
+	*Config
 
+	*http.Server
 	*gin.Engine
-	Server *http.Server
 }
 
-func NewServer(opts *Options) (*Server, error) {
+func New(opts *Options) (*Server, error) {
 	config := NewConfig()
 
 	if err := opts.ApplyTo(config); err != nil {
-		log.Errorln("NewServer ApplyTo Config Error: ", err)
+		log.Errorln("New ApplyTo Config Error: ", err)
 		return nil, err
 	}
 
-	serverInstance, err := config.NewServer()
+	serverInstance, err := config.New()
 	if err != nil {
-		log.Errorln("NewServer NewServer Error: ", err)
+		log.Errorln("New New Error: ", err)
 		return nil, err
 	}
 
@@ -59,52 +60,4 @@ func (s *Server) Run() error {
 		log.Infoln(err.Error())
 	}
 	return nil
-}
-
-func (s *Server) init() {
-	log.Infoln("[GinServer] Init")
-
-	s.Setup()
-	s.InstallMiddlewares()
-	s.InstallAPIs()
-}
-
-// Setup do some setup work for gin engine.
-func (s *Server) Setup() {
-	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
-		log.Infof("%-6s %-s --> %s (%d handlers)", httpMethod, absolutePath, handlerName, nuHandlers)
-	}
-}
-
-// InstallMiddlewares install generic middlewares.
-func (s *Server) InstallMiddlewares() {
-	// necessary middlewares
-	//s.Use(gin.BasicAuth(gin.Accounts{"foo": "bar", "aaa": "bbb"}))
-
-	//// install custom middlewares
-	//for _, m := range s.middlewares {
-	//	mw, ok := middleware.Middlewares[m]
-	//	if !ok {
-	//		log.Warnf("can not find middleware: %s", m)
-	//
-	//		continue
-	//	}
-	//
-	//	log.Infof("install middleware: %s", m)
-	//	s.Use(mw)
-	//}
-}
-
-// InstallAPIs install generic apis.
-func (s *Server) InstallAPIs() {
-	if s.Healthz {
-		s.GET("/healthz", func(c *gin.Context) {
-			c.String(http.StatusOK, "OK")
-		})
-	}
-
-	s.GET("/version", func(c *gin.Context) {
-		c.String(http.StatusOK, "Version 1.0.0")
-	})
-
 }

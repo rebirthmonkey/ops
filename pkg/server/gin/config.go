@@ -2,6 +2,7 @@ package gin
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/rebirthmonkey/ops/pkg/log"
 )
 
 type Config struct {
@@ -20,16 +21,16 @@ func NewConfig() *Config {
 	}
 }
 
-func (c Config) NewServer() (*Server, error) {
+func (c Config) New() (*Server, error) {
 	gin.SetMode(c.Mode)
-
-	s := &Server{
-		Address:     c.Address,
-		Healthz:     c.Healthz,
-		Middlewares: c.Middlewares,
-		Engine:      gin.New(),
+	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
+		log.Infof("%-6s %-s --> %s (%d handlers)", httpMethod, absolutePath, handlerName, nuHandlers)
 	}
 
-	s.init()
+	s := &Server{
+		Config: &c,
+		Engine: gin.New(),
+	}
+
 	return s, nil
 }

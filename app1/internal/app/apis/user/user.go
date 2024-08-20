@@ -3,13 +3,13 @@ package user
 import (
 	"database/sql"
 
-	"app1/pkg/logging"
+	"github.com/rebirthmonkey/ops/pkg/log"
 )
 
 func GetUserByName(db *sql.DB) []string {
 	rows, err := db.Query("SELECT name FROM user")
 	if err != nil {
-		logging.Logger.Errorln("GetUserByName executing MySQL query error: ", err)
+		log.Errorln("GetUserByName executing MySQL query error: ", err)
 		return nil
 	}
 
@@ -18,7 +18,7 @@ func GetUserByName(db *sql.DB) []string {
 		var user string
 		err := rows.Scan(&user)
 		if err != nil {
-			logging.Logger.Errorln("GetUserByName scanning row error: ", err)
+			log.Errorln("GetUserByName scanning row error: ", err)
 			return nil
 		}
 		users = append(users, user)

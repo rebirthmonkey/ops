@@ -2,23 +2,35 @@ package mysql
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/rebirthmonkey/ops/pkg/log"
 )
 
-func ConnectMySQL(dbHost, dbPort, dbName, dbUser, dbPass string) *sql.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		log.Logger.Errorln("ConnectMySQL error: ", err, " with dsn: ", dsn)
-		panic(err)
+type DB struct {
+	*Config
+	*sql.DB
+}
+
+func New(opts *Options) (*DB, error) {
+	config := NewConfig()
+
+	if err := opts.ApplyTo(config); err != nil {
+		log.Errorln("MySQL New ApplyTo Config Error: ", err)
+		return nil, err
 	}
 
-	_, err = db.Query("SHOW tables")
+	db, err := config.New()
 	if err != nil {
-		log.Errorln("ConnectMySQL error: ", err)
-		panic(err)
+		log.Errorln("MySQL New Config Error: ", err)
+		return nil, err
 	}
-	return db
+
+	return &DB{
+		Config: config,
+		DB:     db,
+	}, nil
+}
+
+func (db *DB) Run() {
+	log.Infoln("[Mysql] Run")
 }
