@@ -2,13 +2,12 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package repo
+package service
 
 import (
 	model "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/model/v1"
 )
 
-type UserRepo interface {
+type UserService interface {
 	List() (*model.UserList, error)
-	Close() error
 }

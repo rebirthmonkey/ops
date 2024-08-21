@@ -17,13 +17,13 @@ type UserService interface {
 
 // userService is the UserService instance to handle user request.
 type userService struct {
-	repo repo.Repo
+	repo repo.RepoContainer
 }
 
 var _ UserService = (*userService)(nil)
 
 // newUserService creates and returns the user service instance.
-func newUserService(repo repo.Repo) UserService {
+func newUserService(repo repo.RepoContainer) UserService {
 	return &userService{repo}
 }
 

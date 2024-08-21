@@ -5,12 +5,16 @@
 package mysql
 
 import (
-	repo3 "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
+	model "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/model/v1"
+	userRepoInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
+	mysqlDriver "github.com/rebirthmonkey/ops/pkg/mysql"
 	"sync"
 )
 
+var _ userRepoInterface.UserRepo = (*repo)(nil)
+
 type repo struct {
-	userRepo repo3.UserRepo
+	DB *mysqlDriver.DB
 }
 
 var (
@@ -18,25 +22,32 @@ var (
 	once sync.Once
 )
 
-var _ repo3.Repo = (*repo)(nil)
-
-// Repo creates and returns the store client instance.
-func Repo() (repo3.Repo, error) {
+// GetUserRepo creates and/or returns the store client instance.
+func GetUserRepo() (userRepoInterface.UserRepo, error) {
 	once.Do(func() {
+		db := mysqlDriver.GetDB()
+
 		r = repo{
-			userRepo: newUserRepo(),
+			DB: db,
 		}
 	})
 
-	return r, nil
+	return &r, nil
 }
 
-// UserRepo returns the user store client instance.
-func (r repo) UserRepo() repo3.UserRepo {
-	return r.userRepo
+func (u *repo) List() (*model.UserList, error) {
+	ret := &model.UserList{}
+
+	d := u.DB.DBEngine.
+		Order("id desc").
+		Find(&ret.Items).
+		Offset(-1).
+		Limit(-1).
+		Count(&ret.TotalCount)
+
+	return ret, d.Error
 }
 
-// Close closes the repo.
-func (r repo) Close() error {
-	return r.Close()
+func (u *repo) Close() error {
+	return u.DB.Close()
 }

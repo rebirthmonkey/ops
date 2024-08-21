@@ -20,7 +20,7 @@ var _ userRepoInterface.UserRepo = (*userRepo)(nil)
 
 // newUserRepo creates and returns a user storage.
 func newUserRepo() userRepoInterface.UserRepo {
-	db, err := mysqlDriver.New()
+	db, err := mysqlDriver.Init()
 	if err != nil {
 		log.Errorln("ConnectMySQL error: ", err)
 		panic(err)

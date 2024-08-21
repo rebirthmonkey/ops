@@ -1,38 +1,42 @@
 package mysql
 
 import (
-	//"database/sql"
-	"gorm.io/gorm"
-
 	"github.com/rebirthmonkey/ops/pkg/log"
+	"gorm.io/gorm"
 )
 
 type DB struct {
 	*Config
-	//*sql.DB
 	DBEngine *gorm.DB
 }
 
-func New() (*DB, error) {
+var dbInstance *DB
+
+func Init() error {
 	opts := NewOptions()
 	config := NewConfig()
 
 	if err := opts.ApplyTo(config); err != nil {
-		log.Errorln("MySQL New ApplyTo Config Error: ", err)
-		return nil, err
+		log.Errorln("MySQL Init ApplyTo Config Error: ", err)
+		return err
 	}
 
-	db, err := config.New()
-	if err != nil {
-		log.Errorln("MySQL New Config Error: ", err)
-		return nil, err
+	db, err2 := config.New()
+	if err2 != nil {
+		log.Errorln("MySQL Init Config Error: ", err2)
+		return err2
 	}
 
-	return db, nil
+	dbInstance = db
+	return nil
 }
 
-func (db *DB) Run() {
-	log.Infoln("[Mysql] Run")
+func GetDB() *DB {
+	if dbInstance == nil {
+		log.Errorln("MySQL GetDB Error: dbInstance is nil")
+		panic("MySQL GetDB Error: dbInstance is nil")
+	}
+	return dbInstance
 }
 
 func (db *DB) Close() error {

@@ -6,22 +6,36 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-
-	"github.com/rebirthmonkey/go/pkg/gin/util"
+	controllerInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin"
+	repoInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
+	serviceInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/service"
+	serviceImplemen "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/service/v1"
 	"github.com/rebirthmonkey/ops/pkg/log"
+	"net/http"
 )
 
-// List lists the users in the storage.
-// Only administrator can call this function.
+var _ controllerInterface.UserController = (*controller)(nil)
+
+type controller struct {
+	srv serviceInterface.UserService
+}
+
+func New(repo repoInterface.UserRepo) controllerInterface.UserController {
+	return &controller{
+		srv: serviceImplemen.New(repo),
+	}
+}
+
 func (u *controller) List(c *gin.Context) {
 	log.Infoln("[GinServer] userController: list")
 
-	users, err := u.srv.NewUserService().List()
+	users, err := u.srv.List()
 	if err != nil {
-		util.WriteResponse(c, err, nil)
-
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	util.WriteResponse(c, nil, users)
+	c.JSON(http.StatusOK, gin.H{
+		"users": users,
+	})
 }

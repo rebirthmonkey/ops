@@ -1,11 +1,14 @@
 package app
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	userCtl "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin/v1"
 	userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/mysql"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	ginServer "github.com/rebirthmonkey/ops/pkg/server/gin"
+	"github.com/rebirthmonkey/ops/pkg/utils"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 	"net/http"
 )
 
@@ -31,7 +34,15 @@ func NewServer() (*Server, error) {
 }
 
 func (s *Server) init() {
-	log.Infoln("[Server] Init")
+	log.Infoln("[GinServer] Init")
+
+	// 设置 Gin 路由
+	s.Engine = gin.Default()
+
+	// 配置CORS，允许所有的请求来源
+	s.Engine.Use(cors.Default())
+
+	s.Engine.Use(gin.Logger())
 
 	s.InstallMiddlewares()
 	s.InstallAPIs()
@@ -57,22 +68,33 @@ func (s *Server) InstallMiddlewares() {
 
 func (s *Server) InstallAPIs() {
 	if s.Server.Healthz {
-		s.Server.GET("/", func(c *gin.Context) {
+		s.Engine.GET("/", func(c *gin.Context) {
 			c.String(http.StatusOK, "Healthcheck")
 		})
 	}
 
-	v1 := s.Server.Engine.Group("/v1")
+	s.Engine.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message":    "pong",
+			"IP Address": utils.GetIPAddress(),
+		})
+	})
+
+	// 设置Prometheus metrics
+	p := ginprometheus.NewPrometheus("gin")
+	p.Use(s.Engine)
+
+	v1 := s.Engine.Group("/v1")
 	{
 		log.Infoln("[Server] registry User Handler")
 		userv1 := v1.Group("/users")
 		{
-			userRepoClient, err := userRepoMysql.Repo()
+			userRepo, err := userRepoMysql.GetUserRepo()
 			if err != nil {
 				log.Errorln("failed to create Mysql repo: ", err.Error())
 			}
 
-			userController := userCtl.NewController(userRepoClient)
+			userController := userCtl.New(userRepo)
 			userv1.GET("", userController.List)
 
 		}
@@ -80,6 +102,7 @@ func (s *Server) InstallAPIs() {
 }
 
 func (s *Server) Run() error {
+	s.Engine.Run("0.0.0.0:8888")
 	log.Infoln("[Server] Run")
 
 	return s.Server.Run()

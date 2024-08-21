@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	"gorm.io/driver/mysql"
-	//"database/sql"
 	"gorm.io/gorm"
 )
 
@@ -27,9 +26,7 @@ func NewConfig() *Config {
 }
 
 func (c *Config) New() (*DB, error) {
-	//dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", c.Username, c.Password, c.Host, c.Port, c.Database)
-	//db, err := sql.Open("mysql", dsn)
 	gormInstance, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Logger.Errorln("ConnectMySQL error: ", err, " with dsn: ", dsn)

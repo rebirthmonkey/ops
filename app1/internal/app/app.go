@@ -12,7 +12,6 @@ type App struct {
 	name        string
 	description string
 
-	mysqlDB   *mysqlDriver.DB
 	redisDB   *redisDriver.DB
 	ginServer *Server
 }
@@ -20,16 +19,14 @@ type App struct {
 func NewApp(name string) *App {
 	utils.InitConfig()
 
-	mysqlDB, err := mysqlDriver.New()
-	if err != nil {
-		log.Errorln("Mysql.New error: ", err)
+	if err := mysqlDriver.Init(); err != nil {
+		log.Errorln("Mysql.Init error: ", err)
 	}
-	defer mysqlDB.Close() // 确保在程序退出前关闭数据库连接
 
 	opts2 := redisDriver.NewOptions()
 	redisDB, err := redisDriver.New(opts2)
 	if err != nil {
-		log.Errorln("Redis.New error: ", err)
+		log.Errorln("Redis.Init error: ", err)
 	}
 	defer redisDB.DB.Close() // 确保在程序退出前关闭数据库连接
 
@@ -38,13 +35,12 @@ func NewApp(name string) *App {
 
 	ginServer, err := NewServer()
 	if err != nil {
-		log.Errorln("NewApp New Server error: ", err)
+		log.Errorln("NewApp Init Server error: ", err)
 	}
 
 	app := &App{
-		name:    name,
-		mysqlDB: mysqlDB,
-		//redisDB:   redisDB,
+		name:      name,
+		redisDB:   redisDB,
 		ginServer: ginServer,
 	}
 
