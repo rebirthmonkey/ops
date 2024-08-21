@@ -6,16 +6,12 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rebirthmonkey/go/scaffold/apiserver/apis/apiserver/user/repo"
-	srv "github.com/rebirthmonkey/go/scaffold/apiserver/apis/apiserver/user/service/v1"
+	"github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
+	srv "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/service/v1"
 )
 
 // Controller creates a user handler interface for user resource.
 type Controller interface {
-	Create(c *gin.Context)
-	Delete(c *gin.Context)
-	Update(c *gin.Context)
-	Get(c *gin.Context)
 	List(c *gin.Context)
 }
 

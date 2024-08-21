@@ -2,6 +2,8 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	userCtl "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin/v1"
+	userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/mysql"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	ginServer "github.com/rebirthmonkey/ops/pkg/server/gin"
 	"net/http"
@@ -60,15 +62,21 @@ func (s *Server) InstallAPIs() {
 		})
 	}
 
-	//v1 := s.Server.Engine.Group("/v1")
-	//{
-	//	log.Infoln("[Server] registry User Handler")
-	//	userv1 := v1.Group("/users")
-	//	{
-	//		userv1.GET("/users", func(c *gin.Context) {
-	//			var users = user.GetUserByName(mysqlDB)
-	//	}
-	//}
+	v1 := s.Server.Engine.Group("/v1")
+	{
+		log.Infoln("[Server] registry User Handler")
+		userv1 := v1.Group("/users")
+		{
+			userRepoClient, err := userRepoMysql.Repo()
+			if err != nil {
+				log.Errorln("failed to create Mysql repo: ", err.Error())
+			}
+
+			userController := userCtl.NewController(userRepoClient)
+			userv1.GET("", userController.List)
+
+		}
+	}
 }
 
 func (s *Server) Run() error {

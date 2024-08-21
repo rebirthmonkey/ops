@@ -5,13 +5,10 @@
 package mysql
 
 import (
-	repo3 "github.com/rebirthmonkey/go/scaffold/apiserver/apis/apiserver/user/repo"
+	repo3 "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
 	"sync"
-
-	"github.com/rebirthmonkey/go/pkg/mysql"
 )
 
-// repo defines the APIServer storage.
 type repo struct {
 	userRepo repo3.UserRepo
 }
@@ -24,10 +21,10 @@ var (
 var _ repo3.Repo = (*repo)(nil)
 
 // Repo creates and returns the store client instance.
-func Repo(cfg *mysql.CompletedConfig) (repo3.Repo, error) {
+func Repo() (repo3.Repo, error) {
 	once.Do(func() {
 		r = repo{
-			userRepo: newUserRepo(cfg),
+			userRepo: newUserRepo(),
 		}
 	})
 

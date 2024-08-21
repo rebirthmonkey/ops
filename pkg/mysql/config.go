@@ -1,9 +1,11 @@
 package mysql
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/rebirthmonkey/ops/pkg/log"
+	"gorm.io/driver/mysql"
+	//"database/sql"
+	"gorm.io/gorm"
 )
 
 type Config struct {
@@ -24,19 +26,26 @@ func NewConfig() *Config {
 	}
 }
 
-func (c *Config) New() (*sql.DB, error) {
+func (c *Config) New() (*DB, error) {
 	//dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", c.Username, c.Password, c.Host, c.Port, c.Database)
-	db, err := sql.Open("mysql", dsn)
+	//db, err := sql.Open("mysql", dsn)
+	gormInstance, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Logger.Errorln("ConnectMySQL error: ", err, " with dsn: ", dsn)
 		panic(err)
 	}
 
-	_, err = db.Query("SHOW tables")
-	if err != nil {
+	result := gormInstance.Raw("SHOW tables")
+	if result.Error != nil {
 		log.Errorln("ConnectMySQL error: ", err)
 		panic(err)
 	}
+
+	db := &DB{
+		Config:   c,
+		DBEngine: gormInstance,
+	}
+
 	return db, nil
 }

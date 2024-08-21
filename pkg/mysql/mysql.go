@@ -1,17 +1,20 @@
 package mysql
 
 import (
-	"database/sql"
+	//"database/sql"
+	"gorm.io/gorm"
 
 	"github.com/rebirthmonkey/ops/pkg/log"
 )
 
 type DB struct {
 	*Config
-	*sql.DB
+	//*sql.DB
+	DBEngine *gorm.DB
 }
 
-func New(opts *Options) (*DB, error) {
+func New() (*DB, error) {
+	opts := NewOptions()
 	config := NewConfig()
 
 	if err := opts.ApplyTo(config); err != nil {
@@ -25,12 +28,14 @@ func New(opts *Options) (*DB, error) {
 		return nil, err
 	}
 
-	return &DB{
-		Config: config,
-		DB:     db,
-	}, nil
+	return db, nil
 }
 
 func (db *DB) Run() {
 	log.Infoln("[Mysql] Run")
+}
+
+func (db *DB) Close() error {
+	log.Infoln("[Mysql] Close")
+	return nil
 }

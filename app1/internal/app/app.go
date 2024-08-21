@@ -20,8 +20,7 @@ type App struct {
 func NewApp(name string) *App {
 	utils.InitConfig()
 
-	opts := mysqlDriver.NewOptions()
-	mysqlDB, err := mysqlDriver.New(opts)
+	mysqlDB, err := mysqlDriver.New()
 	if err != nil {
 		log.Errorln("Mysql.New error: ", err)
 	}

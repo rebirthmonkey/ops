@@ -5,7 +5,7 @@
 package v1
 
 import (
-	"github.com/rebirthmonkey/go/scaffold/apiserver/apis/apiserver/user/repo"
+	"github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
 )
 
 // Service defines functions used to return resource interface.
