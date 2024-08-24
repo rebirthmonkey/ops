@@ -1,27 +1,28 @@
 package app
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	userCtl "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin/v1"
-	userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/mysql"
+
+	userController "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin/v1"
+	//userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/mysql"
+	userRepoRedis "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/redis"
 	"github.com/rebirthmonkey/ops/pkg/log"
-	ginServer "github.com/rebirthmonkey/ops/pkg/server/gin"
+	server "github.com/rebirthmonkey/ops/pkg/server/gin"
 	"github.com/rebirthmonkey/ops/pkg/utils"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
-	"net/http"
 )
 
 type Server struct {
-	*ginServer.Server
+	*server.Server
 }
 
 func NewServer() (*Server, error) {
-	opts := ginServer.NewOptions()
-
-	ginServer, err := ginServer.New(opts)
+	ginServer, err := server.New()
 	if err != nil {
-		log.Errorln("Server.New error: ", err)
+		log.Errorln("GinServer.New error: ", err)
 	}
 
 	s := &Server{
@@ -36,19 +37,19 @@ func NewServer() (*Server, error) {
 func (s *Server) init() {
 	log.Infoln("[GinServer] Init")
 
-	// 设置 Gin 路由
+	// set Gin log mode
+	gin.SetMode(gin.ReleaseMode)
+
 	s.Engine = gin.Default()
-
-	// 配置CORS，允许所有的请求来源
 	s.Engine.Use(cors.Default())
-
 	s.Engine.Use(gin.Logger())
 
-	s.InstallMiddlewares()
-	s.InstallAPIs()
+	s.installMiddlewares()
+	s.installAPIs()
 }
 
-func (s *Server) InstallMiddlewares() {
+func (s *Server) installMiddlewares() {
+	log.Infoln("[GinServer] Install Middlewares")
 	// necessary middlewares
 	//s.Use(gin.BasicAuth(gin.Accounts{"foo": "bar", "aaa": "bbb"}))
 
@@ -66,7 +67,9 @@ func (s *Server) InstallMiddlewares() {
 	//}
 }
 
-func (s *Server) InstallAPIs() {
+func (s *Server) installAPIs() {
+	log.Infoln("[GinServer] Install APIs")
+
 	if s.Server.Healthz {
 		s.Engine.GET("/", func(c *gin.Context) {
 			c.String(http.StatusOK, "Healthcheck")
@@ -80,30 +83,32 @@ func (s *Server) InstallAPIs() {
 		})
 	})
 
-	// 设置Prometheus metrics
 	p := ginprometheus.NewPrometheus("gin")
 	p.Use(s.Engine)
 
 	v1 := s.Engine.Group("/v1")
 	{
-		log.Infoln("[Server] registry User Handler")
+		log.Infoln("[GinServer] registry /v1/Users Handler")
 		userv1 := v1.Group("/users")
 		{
-			userRepo, err := userRepoMysql.GetUserRepo()
-			if err != nil {
-				log.Errorln("failed to create Mysql repo: ", err.Error())
-			}
-
-			userController := userCtl.New(userRepo)
+			//userRepo := userRepoMysql.New()
+			userRepo := userRepoRedis.New()
+			userController := userController.New(userRepo)
+			userv1.POST("", userController.Create)
+			userv1.DELETE(":name", userController.Delete)
+			userv1.PUT(":name", userController.Update)
+			userv1.GET(":name", userController.Get)
 			userv1.GET("", userController.List)
-
 		}
+
+		//log.Infoln("[GinServer] registry /v1/Groups Handler")
+		//groupv1 := v1.Group("/groups")
+		//{
+		//
+		//}
 	}
 }
 
 func (s *Server) Run() error {
-	s.Engine.Run("0.0.0.0:8888")
-	log.Infoln("[Server] Run")
-
 	return s.Server.Run()
 }

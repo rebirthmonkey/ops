@@ -5,10 +5,15 @@
 package mysql
 
 import (
+	"errors"
+	"regexp"
+
+	"gorm.io/gorm"
+
 	model "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/model/v1"
 	userRepoInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
+	"github.com/rebirthmonkey/ops/pkg/log"
 	mysqlDriver "github.com/rebirthmonkey/ops/pkg/mysql"
-	"sync"
 )
 
 var _ userRepoInterface.UserRepo = (*repo)(nil)
@@ -17,22 +22,69 @@ type repo struct {
 	DB *mysqlDriver.DB
 }
 
-var (
-	r    repo
-	once sync.Once
-)
+func New() userRepoInterface.UserRepo {
+	db := mysqlDriver.GetUniqueDBInstance()
 
-// GetUserRepo creates and/or returns the store client instance.
-func GetUserRepo() (userRepoInterface.UserRepo, error) {
-	once.Do(func() {
-		db := mysqlDriver.GetDB()
+	return &repo{
+		DB: db,
+	}
+}
 
-		r = repo{
-			DB: db,
+func (u *repo) Create(user *model.User) error {
+	tmpUser := model.User{}
+	u.DB.DBEngine.Where("name = ?", user.Name).Find(&tmpUser)
+	if tmpUser.Name != "" {
+		log.Errorln("UserRepo.Create error: RecordAlreadyExist")
+		return errors.New("UserRepo.Create error: ErrRecordAlreadyExist")
+	}
+
+	if err := u.DB.DBEngine.Create(&user).Error; err != nil {
+		if match, _ := regexp.MatchString("Duplicate entry", err.Error()); match {
+			return errors.New("UserRepo.Create error: ErrRecordAlreadyExist")
 		}
-	})
 
-	return &r, nil
+		return err
+	}
+
+	return nil
+}
+
+func (u *repo) Delete(username string) error {
+	if err := u.DB.DBEngine.Where("name = ?", username).Delete(&model.User{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *repo) Update(user *model.User) error {
+	tmpUser := model.User{}
+	u.DB.DBEngine.Where("name = ?", user.Name).Find(&tmpUser)
+	if tmpUser.Name == "" {
+		err := errors.New("UserRepo.Create error: ErrRecordNotFound")
+		log.Errorln("UserRepo.Create error: ErrRecordNotFound")
+		return err
+	}
+
+	if err := u.DB.DBEngine.Save(user).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *repo) Get(username string) (*model.User, error) {
+	user := &model.User{}
+	err := u.DB.DBEngine.Where("name = ?", username).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("UserRepo.Create error: ErrRecordNotFound")
+		}
+
+		return nil, errors.New("UserRepo.Create error: ErrRecordNotFound")
+	}
+
+	return user, nil
 }
 
 func (u *repo) List() (*model.UserList, error) {
@@ -46,8 +98,4 @@ func (u *repo) List() (*model.UserList, error) {
 		Count(&ret.TotalCount)
 
 	return ret, d.Error
-}
-
-func (u *repo) Close() error {
-	return u.DB.Close()
 }

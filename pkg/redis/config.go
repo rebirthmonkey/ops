@@ -22,7 +22,7 @@ func NewConfig() *Config {
 	}
 }
 
-func (c *Config) New() (*redis.Client, error) {
+func (c *Config) New() (*DB, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     c.Addr,
 		Password: c.Password,
@@ -34,5 +34,11 @@ func (c *Config) New() (*redis.Client, error) {
 		log.Errorln("ConnectRedis executing Redis query Error: ", err)
 		panic(err)
 	}
-	return client, nil
+
+	db := &DB{
+		Config: c,
+		DB:     client,
+	}
+
+	return db, nil
 }

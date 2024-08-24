@@ -46,7 +46,7 @@ go.run: $(addprefix go.run., $(addprefix $(PLATFORM)., $(BINS)))
 .PHONY: go.run.%
 go.run.%:
 	$(eval COMMAND := $(word 2,$(subst ., ,$*)))
-	@echo "===========> Running the application"
+	@echo "===========> Running Go app"
 	@$(GO) run $(ROOT_PACKAGE)/cmd/$(COMMAND)/main.go -c configs/config.yaml
 
 

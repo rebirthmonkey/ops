@@ -9,16 +9,14 @@ import (
 )
 
 type Server struct {
-	//Address     string
-	//Middlewares []string
-	//Healthz     bool
 	*Config
 
 	*http.Server
 	*gin.Engine
 }
 
-func New(opts *Options) (*Server, error) {
+func New() (*Server, error) {
+	opts := NewOptions()
 	config := NewConfig()
 
 	if err := opts.ApplyTo(config); err != nil {
@@ -46,13 +44,13 @@ func (s *Server) Run() error {
 	var eg errgroup.Group
 
 	eg.Go(func() error {
-		log.Infof("[GinServer] Listen on HTTP: %s", s.Address)
+		log.Infoln("[GinServer] Listen on HTTP: ", s.Address)
 
+		s.Engine.Run("0.0.0.0:8888")
 		if err := s.Server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Errorln("failed to start Gin HTTP server: ", err.Error())
 			return err
 		}
-		log.Infof("[GinServer] Server on %s stopped", s.Address)
 		return nil
 	})
 

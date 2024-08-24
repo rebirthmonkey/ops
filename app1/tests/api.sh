@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-#INSECURE_SERVER="127.0.0.1:8888"
-INSECURE_SERVER="app1.tmigrate.com"
-SECURE_SERVER="127.0.0.1:8443"
+INSECURE_SERVER="127.0.0.1:8888"
+#INSECURE_SERVER="app1.tmigrate.com"
+#SECURE_SERVER="127.0.0.1:8443"
 
 Header="-HContent-Type: application/json"
 CCURL="curl -f -s -XPOST" # Create
@@ -13,23 +13,42 @@ DCURL="curl -f -s -XDELETE" # Delete
 
 insecure::hello()
 {
-  ${RCURL} http://${INSECURE_SERVER}/hello
+  ${RCURL} http://${INSECURE_SERVER}/
+  ${RCURL} http://${INSECURE_SERVER}/ping
 }
 
 insecure::user()
 {
-  ${RCURL} "http://${INSECURE_SERVER}/users"; echo  # 列出所有用户
+  # 删除 test00 用户
+  ${DCURL} http://${INSECURE_SERVER}/v1/users/test00; echo
+
+  # 创建 test00
+  ${CCURL} "${Header}" http://${INSECURE_SERVER}/v1/users \
+    -d'{"metadata":{"name":"test00"},"password":"test00@2024","nickname":"00","email":"test00@gmail.com","phone":"1306280xxxx"}'; echo
+
+  # 列出所有用户
+  ${RCURL} "http://${INSECURE_SERVER}/v1/users"; echo
+
+  # 获取 test00 用户的详细信息
+  ${RCURL} http://${INSECURE_SERVER}/v1/users/test00; echo
+
+  # 修改 test00 用户
+  ${UCURL} "${Header}" http://${INSECURE_SERVER}/v1/users/test00 \
+    -d'{"nickname":"test00_modified","email":"test00_modified@foxmail.com","phone":"1306280xxxx"}'; echo
+
+#  # 删除 test00 用户
+#  ${DCURL} http://${INSECURE_SERVER}/v1/users/test00; echo
 }
 
-insecure::group()
-{
-  ${RCURL} "http://${INSECURE_SERVER}/groups"; echo
-}
-
-insecure::auth()
-{
-  ${RCURL} "http://${INSECURE_SERVER}/auth?user=admin&pwd=P@ssw0rd"; echo
-}
+#insecure::group()
+#{
+#  ${RCURL} "http://${INSECURE_SERVER}/groups"; echo
+#}
+#
+#insecure::auth()
+#{
+#  ${RCURL} "http://${INSECURE_SERVER}/auth?user=admin&pwd=P@ssw0rd"; echo
+#}
 
 
 if [[ "$*" =~ insecure:: ]];then

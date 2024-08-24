@@ -31,15 +31,10 @@ func Init() error {
 	return nil
 }
 
-func GetDB() *DB {
+func GetUniqueDBInstance() *DB {
 	if dbInstance == nil {
-		log.Errorln("MySQL GetDB Error: dbInstance is nil")
-		panic("MySQL GetDB Error: dbInstance is nil")
+		log.Errorln("MySQL GetUniqueDBInstance Error: dbInstance is nil")
+		panic("MySQL GetUniqueDBInstance Error: dbInstance is nil")
 	}
 	return dbInstance
-}
-
-func (db *DB) Close() error {
-	log.Infoln("[Mysql] Close")
-	return nil
 }

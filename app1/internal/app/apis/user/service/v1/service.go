@@ -9,6 +9,7 @@ import (
 	"github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
 	userServiceInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/service"
 	"github.com/rebirthmonkey/ops/pkg/metamodel"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var _ userServiceInterface.UserService = (*service)(nil)
@@ -21,6 +22,38 @@ func New(repo repo.UserRepo) userServiceInterface.UserService {
 	return &service{
 		repo: repo,
 	}
+}
+
+func (u *service) Create(user *model.User) error {
+	hashedBytes, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashedBytes)
+	user.Status = 1
+
+	return u.repo.Create(user)
+}
+
+func (u *service) Delete(username string) error {
+	return u.repo.Delete(username)
+}
+
+// Update updates a user account information.
+func (u *service) Update(user *model.User) error {
+	updateUser, err := u.Get(user.Name)
+	if err != nil {
+		return err
+	}
+
+	updateUser.Nickname = user.Nickname
+	updateUser.Email = user.Email
+	updateUser.Phone = user.Phone
+	updateUser.Extend = user.Extend
+
+	return u.repo.Update(updateUser)
+}
+
+// Get returns a user's info by the user identifier.
+func (u *service) Get(username string) (*model.User, error) {
+	return u.repo.Get(username)
 }
 
 func (u *service) List() (*model.UserList, error) {

@@ -11,26 +11,32 @@ type DB struct {
 	DB *redis.Client
 }
 
-func New(opts *Options) (*DB, error) {
+var dbInstance *DB
+
+func Init() error {
+	opts := NewOptions()
 	config := NewConfig()
 
 	if err := opts.ApplyTo(config); err != nil {
 		log.Errorln("Redis New ApplyTo Config Error: ", err)
-		return nil, err
+		return err
 	}
 
 	db, err := config.New()
 	if err != nil {
 		log.Errorln("Redis New Config Error: ", err)
-		return nil, err
+		return err
 	}
 
-	return &DB{
-		Config: config,
-		DB:     db,
-	}, nil
+	dbInstance = db
+
+	return nil
 }
 
-func (db *DB) Run() {
-	log.Infoln("[Redis] Run")
+func GetUniqueDBInstance() *DB {
+	if dbInstance == nil {
+		log.Errorln("Redis GetUniqueDBInstance Error: dbInstance is nil")
+		panic("Redis GetUniqueDBInstance Error: dbInstance is nil")
+	}
+	return dbInstance
 }
