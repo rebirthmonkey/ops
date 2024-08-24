@@ -40,11 +40,7 @@ insecure::user()
 #  ${DCURL} http://${INSECURE_SERVER}/v1/users/test00; echo
 }
 
-#insecure::group()
-#{
-#  ${RCURL} "http://${INSECURE_SERVER}/groups"; echo
-#}
-#
+
 #insecure::auth()
 #{
 #  ${RCURL} "http://${INSECURE_SERVER}/auth?user=admin&pwd=P@ssw0rd"; echo

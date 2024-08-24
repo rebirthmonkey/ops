@@ -2,8 +2,8 @@
 # Docker & K8s options
 
 #REGISTRY_PREFIX ?= ruan-nj.tencentcloudcr.com/tamlab/repo
-REGISTRY_PREFIX ?= registry.rebirthmonkey.com/ops/ops
-#REGISTRY_PREFIX ?= wukongsun
+#REGISTRY_PREFIX ?= registry.rebirthmonkey.com/ops/ops
+REGISTRY_PREFIX ?= wukongsun
 IMAGE := app1
 IMAGE_VERSION := v1.0.0
 
