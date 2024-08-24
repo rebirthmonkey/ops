@@ -30,7 +30,8 @@ docker.push:
 .PHONY: docker.run
 docker.run:
 	@echo "===========> Running Local Docker $(REGISTRY_PREFIX)/$(IMAGE):$(IMAGE_VERSION)"
-	@docker run --rm -p 8888:8888 -v $(ROOT_DIR)/configs/config.yaml:/etc/app/config.yaml $(REGISTRY_PREFIX)/$(IMAGE):$(IMAGE_VERSION)
+	@docker run --rm -p 8889:8888 -v $(ROOT_DIR)/configs/config.yaml:/etc/app/config.yaml $(REGISTRY_PREFIX)/$(IMAGE):$(IMAGE_VERSION)
+	@docker run --rm -p 8889:8888 -v $(ROOT_DIR)/configs/config.yaml:/etc/app/config.yaml $(REGISTRY_PREFIX)/$(IMAGE):$(IMAGE_VERSION)
 
 
 .PHONY: k8s.run

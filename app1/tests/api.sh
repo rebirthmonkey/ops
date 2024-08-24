@@ -35,9 +35,6 @@ insecure::user()
   # 修改 test00 用户
   ${UCURL} "${Header}" http://${INSECURE_SERVER}/v1/users/test00 \
     -d'{"nickname":"test00_modified","email":"test00_modified@foxmail.com","phone":"1306280xxxx"}'; echo
-
-#  # 删除 test00 用户
-#  ${DCURL} http://${INSECURE_SERVER}/v1/users/test00; echo
 }
 
 

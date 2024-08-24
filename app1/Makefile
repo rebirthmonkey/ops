@@ -38,7 +38,7 @@ clean:
 # Docker & K8s
 
 .PHONY: build-docker
-build-docker: build
+build-docker:
 	@echo "===========> Building Docker image"
 	@$(MAKE) docker.build
 

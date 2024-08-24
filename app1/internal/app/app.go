@@ -4,6 +4,7 @@ import (
 	"github.com/rebirthmonkey/ops/pkg/log"
 	mysqlDriver "github.com/rebirthmonkey/ops/pkg/mysql"
 	redisDriver "github.com/rebirthmonkey/ops/pkg/redis"
+	restDriver "github.com/rebirthmonkey/ops/pkg/rest"
 
 	"github.com/rebirthmonkey/ops/pkg/utils"
 )
@@ -24,6 +25,10 @@ func New(name string) *App {
 
 	if err := redisDriver.Init(); err != nil {
 		log.Errorln("Redis.Init error: ", err)
+	}
+
+	if err := restDriver.Init(); err != nil {
+		log.Errorln("REST.Init error: ", err)
 	}
 
 	ginServer, err := NewServer()

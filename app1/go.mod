@@ -6,7 +6,7 @@ require (
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/rebirthmonkey/ops v0.0.4
+	github.com/rebirthmonkey/ops v0.0.6
 	github.com/zsais/go-gin-prometheus v0.1.0
 	golang.org/x/crypto v0.23.0
 	gorm.io/gorm v1.23.5

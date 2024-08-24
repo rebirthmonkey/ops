@@ -1,5 +1,5 @@
 # Builder Stage
-FROM golang:1.22-alpine as builder
+FROM golang:1.23-alpine as builder
 
 # 设置工作目录
 WORKDIR /app
@@ -19,7 +19,7 @@ COPY . .
 RUN make build
 
 # Distribution Stage
-FROM golang:1.22
+FROM golang:1.23-alpine
 
 # 设置工作目录
 WORKDIR /app

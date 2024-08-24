@@ -10,6 +10,10 @@ redis:
   password: P@ssw0rd
   db: 0
 
+rest:
+  host: host.docker.internal # for Docker Desktop
+  port: 8889
+
 log:
   filePath: "/tmp/app.log"
 

@@ -116,6 +116,8 @@ github.com/prometheus/procfs v0.11.1 h1:xRC8Iq1yyca5ypa9n1EZnWZkt7dwcoRPQwX/5gwa
 github.com/prometheus/procfs v0.11.1/go.mod h1:eesXgaPo1q7lBpVMoMy0ZOFTth9hBn4W/y0/p/ScXhY=
 github.com/rebirthmonkey/go v0.0.0-20231216021605-9beefc8a614d h1:6K6XLpVHG1LB3rj+WYLJ/XMxp3Z5fT5RwB8sEYWrKqI=
 github.com/rebirthmonkey/go v0.0.0-20231216021605-9beefc8a614d/go.mod h1:JPvxQQ3r36JVIr+5oBZlUE3GhX4brY3nrC6OibRPq8c=
+github.com/rebirthmonkey/ops v0.0.6 h1:R8xxT7NRDk9+lw9axDb9sQi3pTIe0KWIOS0bT5+d3qQ=
+github.com/rebirthmonkey/ops v0.0.6/go.mod h1:AL+gC6scWkamg67YNTpLesZV4fPig9wIGDISNO+fO/A=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
 github.com/sagikazarmark/locafero v0.4.0 h1:HApY1R9zGo4DBgr7dqsTH/JJxLTTsOt7u6keLGt6kNQ=
