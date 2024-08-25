@@ -5,14 +5,13 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 
-	userController "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin/v1"
-	userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/mysql"
-
+	userController "github.com/rebirthmonkey/ops/app1/internal/user/controller/gin/v1"
+	userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/user/repo/mysql"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	server "github.com/rebirthmonkey/ops/pkg/server/gin"
 	"github.com/rebirthmonkey/ops/pkg/utils"
-	ginprometheus "github.com/zsais/go-gin-prometheus"
 )
 
 type Server struct {

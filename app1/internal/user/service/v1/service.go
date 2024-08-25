@@ -5,9 +5,9 @@
 package v1
 
 import (
-	model "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/model/v1"
-	"github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
-	userServiceInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/service"
+	model "github.com/rebirthmonkey/ops/app1/internal/user/model/v1"
+	"github.com/rebirthmonkey/ops/app1/internal/user/repo"
+	userServiceInterface "github.com/rebirthmonkey/ops/app1/internal/user/service"
 	"github.com/rebirthmonkey/ops/pkg/metamodel"
 	"golang.org/x/crypto/bcrypt"
 )

@@ -10,8 +10,8 @@ import (
 
 	"gorm.io/gorm"
 
-	model "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/model/v1"
-	userRepoInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
+	model "github.com/rebirthmonkey/ops/app1/internal/user/model/v1"
+	userRepoInterface "github.com/rebirthmonkey/ops/app1/internal/user/repo"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	mysqlDriver "github.com/rebirthmonkey/ops/pkg/mysql"
 )

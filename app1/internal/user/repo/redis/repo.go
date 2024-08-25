@@ -7,8 +7,8 @@ package mysql
 import (
 	"context"
 	"encoding/json"
-	model "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/model/v1"
-	userRepoInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
+	model "github.com/rebirthmonkey/ops/app1/internal/user/model/v1"
+	userRepoInterface "github.com/rebirthmonkey/ops/app1/internal/user/repo"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	redisDriver "github.com/rebirthmonkey/ops/pkg/redis"
 )

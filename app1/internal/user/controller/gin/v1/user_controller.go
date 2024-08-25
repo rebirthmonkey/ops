@@ -1,17 +1,13 @@
-// Copyright 2022 Wukong SUN <rebirthmonkey@gmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file.
-
 package v1
 
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	controllerInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin"
-	model "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/model/v1"
-	repoInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo"
-	serviceInterface "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/service"
-	serviceImpl "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/service/v1"
+	controllerInterface "github.com/rebirthmonkey/ops/app1/internal/user/controller/gin"
+	model "github.com/rebirthmonkey/ops/app1/internal/user/model/v1"
+	repoInterface "github.com/rebirthmonkey/ops/app1/internal/user/repo"
+	serviceInterface "github.com/rebirthmonkey/ops/app1/internal/user/service"
+	serviceImpl "github.com/rebirthmonkey/ops/app1/internal/user/service/v1"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	"github.com/rebirthmonkey/ops/pkg/server/gin/util"
 )
