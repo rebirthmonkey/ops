@@ -1,13 +1,13 @@
 package app
 
 import (
-	userRepoRest "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/rest"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	userController "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/controller/gin/v1"
+	userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/app/apis/user/repo/mysql"
 
 	"github.com/rebirthmonkey/ops/pkg/log"
 	server "github.com/rebirthmonkey/ops/pkg/server/gin"
@@ -90,9 +90,9 @@ func (s *Server) installAPIs() {
 		log.Infoln("[GinServer] registry /v1/Users Handler")
 		userv1 := v1.Group("/users")
 		{
-			//userRepo := userRepoMysql.New()
+			userRepo := userRepoMysql.New()
 			//userRepo := userRepoRedis.New()
-			userRepo := userRepoRest.New()
+			//userRepo := userRepoRest.New()
 			userController := userController.New(userRepo)
 			userv1.POST("", userController.Create)
 			userv1.DELETE(":name", userController.Delete)
