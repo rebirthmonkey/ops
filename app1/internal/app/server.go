@@ -1,6 +1,7 @@
 package app
 
 import (
+	usedUserRepo "github.com/rebirthmonkey/ops/app1/internal/user/repo/mq"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -8,7 +9,6 @@ import (
 	ginprometheus "github.com/zsais/go-gin-prometheus"
 
 	userController "github.com/rebirthmonkey/ops/app1/internal/user/controller/gin/v1"
-	userRepoMysql "github.com/rebirthmonkey/ops/app1/internal/user/repo/mysql"
 	"github.com/rebirthmonkey/ops/pkg/log"
 	server "github.com/rebirthmonkey/ops/pkg/server/gin"
 	"github.com/rebirthmonkey/ops/pkg/utils"
@@ -89,9 +89,10 @@ func (s *Server) installAPIs() {
 		log.Infoln("[GinServer] registry /v1/Users Handler")
 		userv1 := v1.Group("/users")
 		{
-			userRepo := userRepoMysql.New()
+			//userRepo := userRepoMysql.New()
 			//userRepo := userRepoRedis.New()
 			//userRepo := userRepoRest.New()
+			userRepo := usedUserRepo.New()
 			userController := userController.New(userRepo)
 			userv1.POST("", userController.Create)
 			userv1.DELETE(":name", userController.Delete)

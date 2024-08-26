@@ -2,14 +2,16 @@ package v1
 
 import (
 	"errors"
+
 	"github.com/gin-gonic/gin"
+	"github.com/rebirthmonkey/ops/pkg/log"
+	"github.com/rebirthmonkey/ops/pkg/server/gin/util"
+
 	controllerInterface "github.com/rebirthmonkey/ops/app1/internal/user/controller/gin"
 	model "github.com/rebirthmonkey/ops/app1/internal/user/model/v1"
 	repoInterface "github.com/rebirthmonkey/ops/app1/internal/user/repo"
 	serviceInterface "github.com/rebirthmonkey/ops/app1/internal/user/service"
 	serviceImpl "github.com/rebirthmonkey/ops/app1/internal/user/service/v1"
-	"github.com/rebirthmonkey/ops/pkg/log"
-	"github.com/rebirthmonkey/ops/pkg/server/gin/util"
 )
 
 var _ controllerInterface.UserController = (*controller)(nil)
@@ -25,7 +27,7 @@ func New(repo repoInterface.UserRepo) controllerInterface.UserController {
 }
 
 func (u *controller) Create(c *gin.Context) {
-	log.Infoln("[GinServer] userController: create")
+	log.Infoln("[UserController.Gin] Create: start")
 
 	var user model.User
 
@@ -45,7 +47,7 @@ func (u *controller) Create(c *gin.Context) {
 }
 
 func (u *controller) Delete(c *gin.Context) {
-	log.Infoln("[GinServer] userController: delete")
+	log.Infoln("[UserController.Gin] Delete: start")
 
 	if err := u.svc.Delete(c.Param("name")); err != nil {
 		util.WriteResponse(c, err, nil)
@@ -57,7 +59,7 @@ func (u *controller) Delete(c *gin.Context) {
 }
 
 func (u *controller) Update(c *gin.Context) {
-	log.Infoln("[GinServer] userController: update")
+	log.Infoln("[UserController.Gin] Update: start")
 
 	var user model.User
 
@@ -78,7 +80,7 @@ func (u *controller) Update(c *gin.Context) {
 }
 
 func (u *controller) Get(c *gin.Context) {
-	log.Infoln("[GinServer] userController: get")
+	log.Infoln("[UserController.Gin] Get: start")
 
 	user, err := u.svc.Get(c.Param("name"))
 	if err != nil {
@@ -90,7 +92,7 @@ func (u *controller) Get(c *gin.Context) {
 }
 
 func (u *controller) List(c *gin.Context) {
-	log.Infoln("[GinServer] userController: list")
+	log.Infoln("[UserController.Gin] List: start")
 
 	users, err := u.svc.List()
 	if err != nil {

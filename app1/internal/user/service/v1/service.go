@@ -8,7 +8,6 @@ import (
 	model "github.com/rebirthmonkey/ops/app1/internal/user/model/v1"
 	"github.com/rebirthmonkey/ops/app1/internal/user/repo"
 	userServiceInterface "github.com/rebirthmonkey/ops/app1/internal/user/service"
-	"github.com/rebirthmonkey/ops/pkg/metamodel"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -36,22 +35,22 @@ func (u *service) Delete(username string) error {
 	return u.repo.Delete(username)
 }
 
-// Update updates a user account information.
 func (u *service) Update(user *model.User) error {
-	updateUser, err := u.Get(user.Name)
-	if err != nil {
-		return err
-	}
+	//updateUser, err := u.repo.Get(user.Name)
+	//if err != nil {
+	//	log.Errorln("[UserService] Update error: ", err)
+	//	return err
+	//}
 
+	updateUser := &model.User{}
+	updateUser.Name = user.Name
 	updateUser.Nickname = user.Nickname
 	updateUser.Email = user.Email
 	updateUser.Phone = user.Phone
-	updateUser.Extend = user.Extend
 
 	return u.repo.Update(updateUser)
 }
 
-// Get returns a user's info by the user identifier.
 func (u *service) Get(username string) (*model.User, error) {
 	return u.repo.Get(username)
 }
@@ -65,15 +64,12 @@ func (u *service) List() (*model.UserList, error) {
 	infos := make([]*model.User, 0)
 	for _, user := range users.Items {
 		infos = append(infos, &model.User{
-			ObjectMeta: metamodel.ObjectMeta{
-				ID:   user.ID,
-				Name: user.Name,
-				//CreatedAt: user.CreatedAt,
-				//UpdatedAt: user.UpdatedAt,
-			},
+
+			Name:     user.Name,
 			Nickname: user.Nickname,
 			Email:    user.Email,
 			Phone:    user.Phone,
+			ID:       user.ID,
 		})
 	}
 

@@ -10,6 +10,13 @@ redis:
   password: P@ssw0rd
   db: 0
 
+mq:
+  host: host.docker.internal # for Docker Desktop
+  port: 5672
+  user: ruan
+  password: P@ssw0rd
+  channel: app1
+
 rest:
   host: host.docker.internal # for Docker Desktop
   port: 8889

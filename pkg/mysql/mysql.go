@@ -21,10 +21,10 @@ func Init() error {
 		return err
 	}
 
-	db, err2 := config.New()
-	if err2 != nil {
-		log.Errorln("MySQL Init Config Error: ", err2)
-		return err2
+	db, err := config.New()
+	if err != nil {
+		log.Errorln("MySQL Init Config Error: ", err)
+		return err
 	}
 
 	dbInstance = db

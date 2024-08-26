@@ -8,6 +8,7 @@ require (
 	github.com/rebirthmonkey/go v0.0.0-20231216021605-9beefc8a614d
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.19.0
+	github.com/streadway/amqp v1.1.0
 	golang.org/x/sync v0.6.0
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/gorm v1.23.5

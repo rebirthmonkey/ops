@@ -61,12 +61,18 @@ func (u *repo) Update(user *model.User) error {
 	tmpUser := model.User{}
 	u.DB.DBEngine.Where("name = ?", user.Name).Find(&tmpUser)
 	if tmpUser.Name == "" {
-		err := errors.New("UserRepo.Create error: ErrRecordNotFound")
-		log.Errorln("UserRepo.Create error: ErrRecordNotFound")
+		err := errors.New("UserRepo.Update error: ErrRecordNotFound")
+		log.Errorln("UserRepo.Update error: ErrRecordNotFound")
 		return err
 	}
 
-	if err := u.DB.DBEngine.Save(user).Error; err != nil {
+	//if err := u.DB.DBEngine.Save(user).Error; err != nil {
+	//	log.Errorln("[UserRepo.MySQL] Update: error ", err.Error())
+	//	return err
+	//}
+
+	if err := u.DB.DBEngine.Model(&user).Where("name = ?", user.Name).Updates(user).Error; err != nil {
+		log.Errorln("[UserRepo.MySQL] Update: error ", err.Error())
 		return err
 	}
 
@@ -78,7 +84,7 @@ func (u *repo) Get(username string) (*model.User, error) {
 	err := u.DB.DBEngine.Where("name = ?", username).First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("UserRepo.Create error: ErrRecordNotFound")
+			return nil, errors.New("UserRepo.Get error: ErrRecordNotFound")
 		}
 
 		return nil, errors.New("UserRepo.Create error: ErrRecordNotFound")

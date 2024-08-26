@@ -24,7 +24,7 @@ insecure::user()
 
   # 创建 test00
   ${CCURL} "${Header}" http://${INSECURE_SERVER}/v1/users \
-    -d'{"metadata":{"name":"test00"},"password":"test00@2024","nickname":"00","email":"test00@gmail.com","phone":"1306280xxxx"}'; echo
+    -d'{"name":"test00","password":"test00@2024","nickname":"00","email":"test00@gmail.com","phone":"1306280xxxx"}'; echo
 
   # 列出所有用户
   ${RCURL} "http://${INSECURE_SERVER}/v1/users"; echo

@@ -10,15 +10,19 @@ import (
 
 // User represents a user restful resource. It is also used as data model.
 type User struct {
-	metamodel.ObjectMeta `json:"metadata,omitempty"`
+	//metamodel.ObjectMeta `json:"metadata,omitempty"`
 
-	Status      int64  `json:"status"              gorm:"column:status"    validate:"omitempty"`
-	Nickname    string `json:"nickname"            gorm:"column:nickname"  validate:"required,min=1,max=30"`
-	Password    string `json:"password,omitempty"  gorm:"column:password"  validate:"required"`
-	Email       string `json:"email"               gorm:"column:email"     validate:"required,email,min=1,max=100"`
-	Phone       string `json:"phone"               gorm:"column:phone"     validate:"omitempty"`
-	IsAdmin     int64  `json:"isAdmin,omitempty"   gorm:"column:isAdmin"   validate:"omitempty"`
-	TotalPolicy string `json:"totalPolicy"         gorm:"-"                validate:"omitempty"`
+	Name         string `json:"name"            gorm:"column:name"  validate:"required,min=1,max=30"`
+	Status       int64  `json:"status"              gorm:"column:status"    validate:"omitempty"`
+	Nickname     string `json:"nickname"            gorm:"column:nickname"  validate:"required,min=1,max=30"`
+	Password     string `json:"password,omitempty"  gorm:"column:password"  validate:"required"`
+	Email        string `json:"email"               gorm:"column:email"     validate:"required,email,min=1,max=100"`
+	Phone        string `json:"phone"               gorm:"column:phone"     validate:"omitempty"`
+	IsAdmin      int64  `json:"isAdmin,omitempty"   gorm:"column:isAdmin"   validate:"omitempty"`
+	TotalPolicy  string `json:"totalPolicy"         gorm:"-"                validate:"omitempty"`
+	ID           uint64 `json:"id,omitempty" gorm:"primary_key;AUTO_INCREMENT;column:id"`
+	InstanceID   string `json:"instanceID,omitempty" gorm:"unique;column:instanceID;type:varchar(32);not null"`
+	ExtendShadow string `json:"-" gorm:"column:extendShadow" validate:"omitempty"`
 	//LoginedAt   time.Time `json:"loginedAt,omitempty" gorm:"column:loginedAt"`
 }
 
@@ -28,6 +32,12 @@ type UserList struct {
 	metamodel.ListMeta `json:",inline"`
 
 	Items []*User `json:"items"`
+}
+
+type MQBody struct {
+	Category string
+	User     *User
+	UserList *UserList
 }
 
 // TableName maps to mysql table name.
