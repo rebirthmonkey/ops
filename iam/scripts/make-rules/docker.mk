@@ -4,7 +4,7 @@
 #REGISTRY_PREFIX ?= ruan-nj.tencentcloudcr.com/tamlab/repo
 #REGISTRY_PREFIX ?= registry.rebirthmonkey.com/ops/ops
 REGISTRY_PREFIX ?= wukongsun
-IMAGE := app1
+IMAGE := iam
 IMAGE_VERSION := v1.0.0
 
 NAMESPACE ?= $(IMAGE)
