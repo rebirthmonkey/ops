@@ -1,12 +1,18 @@
+tc:
+  pkg_name: tmigrate
+  cos_bucket: tmigrate-1251956900
+
 mysql:
   host: host.docker.internal # for Docker Desktop
+#  host: mysql.internal.tmigrate.com
   port: 3306
   user: root
   password: P@ssw0rd
-  dbname: app1
+  dbname: oo
 
 redis:
   addr: host.docker.internal:6379 # for Docker Desktop
+#  addr: redis.internal.tmigrate.com:6379
   password: P@ssw0rd
   db: 0
 

@@ -14,7 +14,20 @@ mkdir -p /usr/local/bin/app/configs
 wget "https://$COS_BUCKET.cos.$COS_REGION.myqcloud.com$COS_PATH/app" -O /usr/local/bin/app/app
 chmod +x /usr/local/bin/app/app
 
-wget "https://$COS_BUCKET.cos.$COS_REGION.myqcloud.com$COS_PATH/config.yaml" -O /usr/local/bin/app/configs/config.yaml
+cat > /usr/local/bin/app/configs/config.yaml <<CONFEOF
+mysql:
+  host: mysql.$PRIVATE_DOMAIN
+  port: 3306
+  user: root
+  password: $DB_PASSWORD
+  dbname: $DB_NAME
+redis:
+  addr: redis.$PRIVATE_DOMAIN:6379
+  password: $DB_PASSWORD
+  db: 0
+log:
+  filePath: "/tmp/app.log"
+CONFEOF
 
 cat >  /etc/systemd/system/app.service <<EOF
 [Unit]

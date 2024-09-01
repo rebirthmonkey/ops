@@ -21,7 +21,7 @@ build:
 .PHONY: push-tc
 upload: build
 	@echo "===========> Uploading Go bin and config files"
-	@source ~/.tencentcloud/tmigrate.sh
+#	@source ~/.tencentcloud/tmigrate.sh
 	@./scripts/cos-upload.sh
 
 .PHONY: run
@@ -94,3 +94,6 @@ clean-helm:
 test-api:
 	@$(MAKE) test.api
 
+.PHONY: test
+test:
+	@scripts/cos-upload.sh

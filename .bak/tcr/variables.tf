@@ -4,18 +4,6 @@ variable "random_tcr_suffix" {
   description = "tcr name is global uniq. True for a random suffix"
 }
 
-variable "create_instance" {
-  type = bool
-  default = true
-  description = "create tcr instance or not"
-}
-
-variable "tcr_id" {
-  type = string
-  default = ""
-  description = "when create_instance is false, we need an existing tcr id here"
-}
-
 variable "tcr_name" {
   type = string
   description = "tcr name"

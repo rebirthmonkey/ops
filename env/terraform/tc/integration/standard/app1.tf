@@ -1,14 +1,15 @@
 locals {
   # app1
   app1_server_port   = 8888
-  app1_sub_domain    = "${local.prefix}-app1-${var.region}"
+  app1_sub_domain    = "${local.prefix}-app1-${var.short_region}"
   app1_domain        = "${local.app1_sub_domain}.${local.public_domain}"
   app1_app_vars      = {
-    COS_BUCKET     = "ruan-1251956900"
-    COS_REGION     = "ap-guangzhou"
-    COS_PATH       = "/app1"
-    PRIVATE_DOMAIN = local.private_domain
-    DB_PASSWORD    = var.db_password
+    COS_BUCKET       = "tmigrate-1251956900"
+    COS_REGION       = "ap-nanjing"
+    COS_PATH         = "/tmigrate/app1"
+    PRIVATE_DOMAIN   = local.private_domain
+    DB_NAME          = var.db_name
+    DB_PASSWORD      = var.db_password
   }
 
   # as_configuration
@@ -30,14 +31,15 @@ locals {
 
 module "app1_clb" {
   source                       = "../../modules/clb"
-  project_id                   = local.project_id
+  project_id                   = var.project_id
   clb_name                     = "${local.prefix}-app1"
   clb_tags                     = local.tags
   tags                         = local.tags
 
   network_type                 = "OPEN" // 'OPEN' and 'INTERNAL'
   vpc_id                       = module.network.vpc_id
-  security_groups              = [module.security_group.id]
+#   security_groups              = [module.security_group.id]
+  security_groups              = [local.default_sg_id]
 
   create_clb_log               = false
   dynamic_vip                  = true
@@ -71,7 +73,7 @@ module "app1_as" {
   source     = "../../modules/as"
 
   # as instance
-  project_id         = local.project_id
+  project_id         = var.project_id
   tags               = local.tags
 
   # as_configuration
@@ -81,7 +83,8 @@ module "app1_as" {
   os_name            = local.app1_as_os_name
   system_disk_size   = local.app1_as_system_disk_size
   password           = local.app1_as_cvm_password
-  security_group_ids = [module.security_group.id]
+#   security_group_ids = [module.security_group.id]
+  security_group_ids = [local.default_sg_id]
   user_data_raw      = local.app1_as_user_data_raw
 
   # as_group

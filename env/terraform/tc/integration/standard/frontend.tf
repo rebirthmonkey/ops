@@ -1,11 +1,11 @@
 locals {
   frontend_server_port = 80
-  frontend_sub_domain  = "${local.prefix}-frontend-${var.region}"
+  frontend_sub_domain  = "${local.prefix}-frontend-${var.short_region}"
   frontend_domain      = "${local.frontend_sub_domain}.${local.public_domain}"
 
   # clb
-  clb_master_zone_id = var.clb_master_zone_id # "ap-nanjing-1"
-  clb_slave_zone_id  = var.clb_slave_zone_id #"ap-nanjing-3"
+  clb_master_zone_id    = var.clb_master_zone_id # "ap-nanjing-1"
+  clb_slave_zone_id     = var.clb_slave_zone_id #"ap-nanjing-3"
 
   # as_configuration
   frontend_as_cvm_password               = var.cvm_password    # 测试机和伸缩组云主机登录密码
@@ -41,7 +41,8 @@ module "frontend_clb" {
 
   network_type                 = "OPEN" // 'OPEN' and 'INTERNAL'
   vpc_id                       = module.network.vpc_id
-  security_groups              = [module.security_group.id]
+#   security_groups              = [module.security_group.id]
+  security_groups              = [local.default_sg_id]
 
   create_clb_log               = false
   dynamic_vip                  = true
@@ -85,7 +86,8 @@ module "frontend_as" {
   os_name            = local.frontend_as_os_name
   system_disk_size   = local.frontend_as_system_disk_size
   password           = local.frontend_as_cvm_password
-  security_group_ids = [module.security_group.id]
+#   security_group_ids = [module.security_group.id]
+  security_group_ids = [local.default_sg_id]
   user_data_raw      = local.frontend_as_user_data_raw
 
   # as_group

@@ -6,17 +6,10 @@ resource "random_string" "randomname" {
 
 locals {
   name = var.random_tcr_suffix ?  format("%s-%s", var.tcr_name, random_string.randomname.id) : var.tcr_name
-  tcr_id = var.create_instance ? concat(tencentcloud_tcr_instance.foo.*.id, [""])[0] : var.tcr_id
-  tcr_name = data.tencentcloud_tcr_instances.name.instance_list[0].name
 }
 
-data "tencentcloud_tcr_instances" "name" {
-  depends_on = [tencentcloud_tcr_instance.foo]
-  instance_id = local.tcr_id
-}
 
 resource "tencentcloud_tcr_instance" "foo" {
-  count = var.create_instance ? 1 : 0
   name                  = local.name
   instance_type         = var.instance_type //"basic"
   open_public_operation = var.open_public_operation //false
@@ -32,7 +25,7 @@ resource "tencentcloud_tcr_instance" "foo" {
 
 resource "tencentcloud_tcr_vpc_attachment" "foo" {
   for_each = var.vpc_attachments
-  instance_id = local.tcr_id
+  instance_id = tencentcloud_tcr_instance.foo.id
   vpc_id      = each.value.vpc_id
   subnet_id   = each.value.subnet_id
   enable_public_domain_dns = try(each.value.enable_public_domain_dns, false)
@@ -40,18 +33,18 @@ resource "tencentcloud_tcr_vpc_attachment" "foo" {
 }
 
 resource "tencentcloud_tcr_token" "my_token" {
-  instance_id = local.tcr_id
+  instance_id = tencentcloud_tcr_instance.foo.id
   description = "tcr token"
-  lifecycle {
-    ignore_changes = [
-      user_name
-    ]
-  }
+#   lifecycle {
+#     ignore_changes = [
+#       user_name
+#     ]
+#   }
 }
 
 resource "tencentcloud_tcr_namespace" "namespaces" {
   for_each = var.namespaces
-  instance_id    = local.tcr_id
+  instance_id    = tencentcloud_tcr_instance.foo.id
   name           = try(each.value.name, each.key)
   is_public      = try(each.value.is_public, false)
   is_auto_scan   = try(each.value.is_auto_scan, false)
@@ -68,7 +61,7 @@ resource "tencentcloud_tcr_namespace" "namespaces" {
 resource "tencentcloud_tcr_service_account" "service_accounts" {
   depends_on = [tencentcloud_tcr_namespace.namespaces]
   for_each = var.service_accounts
-  registry_id = local.tcr_id
+  registry_id = tencentcloud_tcr_instance.foo.id
   name        = try(each.value.name, each.key)
   dynamic "permissions" {
     for_each = try(each.value.permissions, [])

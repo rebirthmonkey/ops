@@ -1,5 +1,6 @@
 locals {
-  private_domain  = "${local.prefix}-tmigrate.com"
+#   private_domain  = "${local.prefix}-tmigrate.com"
+  private_domain  = "internal.${var.public_domain}"
   public_domain   = var.public_domain   # tmigrate.com
   dns_record_line = var.dns_record_line # "默认"
 }
@@ -11,7 +12,7 @@ module "private-dns" {
 
   vpc_sets = [
     {
-      region      = local.region
+      region      = var.region
       uniq_vpc_id = module.network.vpc_id
     }
   ]
@@ -20,12 +21,12 @@ module "private-dns" {
   tags               = local.tags
 
   records = {
-#     "cdb" = {
-#       sub_domain   = "mysql"
-#       record_type  = "A"
-#       record_value = module.cdbs.intranet_ip
-#       ttl          = 600
-#     }
+    "cdb" = {
+      sub_domain   = "mysql"
+      record_type  = "A"
+      record_value = module.cdbs.intranet_ip
+      ttl          = 600
+    }
 
     "redis" = {
       sub_domain   = "redis"
@@ -45,7 +46,6 @@ module "public-dns" {
   remark        = ""
 
   records = {
-    # DNS记录配置 CNAME
     app1 = {
       domain      = local.public_domain
       create      = true

@@ -1,17 +1,14 @@
 module "standard" {
   source = "../../integration/standard"
 
-  # provider
-  region = "ap-nanjing"
-  short_region = "nj"
-  tencentcloud_api_domain = "internal.tencentcloudapi.com"
-
   # general
+  region                  = "ap-nanjing"
+  short_region            = "nj"
+  availability_zones      = ["ap-nanjing-1", "ap-nanjing-2", "ap-nanjing-3"]
+  tencentcloud_api_domain = "internal.tencentcloudapi.com"
 #   project_id = 1321390 # intl center
   project_id              = 1200385 # china-tam center
 
-
-  availability_zones      = ["ap-nanjing-1", "ap-nanjing-2", "ap-nanjing-3"]
 
   # foundation
   vpc_cidr                = "10.0.0.0/16"
@@ -28,13 +25,27 @@ module "standard" {
   cvm_password            = "P@ssw0rd"
 
   # cdb
-  db_password             = "P@ssw0rd"
   cdb_availability_zone   = "ap-nanjing-1"
   cdb_first_slave_zone    = "ap-nanjing-3"
+  db_name                 = "oo"
+  db_password             = "P@ssw0rd"
 
   # redis
   redis_availability_zone = "ap-nanjing-1"
   redis_replica_zone_names= ["ap-nanjing-3"]
+
+  # tcr
+  tcr_availability_zone   = "ap-nanjing-3"
+  tcr_name                = "oo-registry"
+
+  # tke
+  node_cidrs              = ["10.0.64.0/24","10.0.65.0/24","10.0.66.0/24"]
+  node_azs                = ["ap-nanjing-1", "ap-nanjing-2", "ap-nanjing-3"]
+  pod_cidrs               = ["10.0.128.0/24","10.0.129.0/24","10.0.130.0/24" ]
+  pod_azs                 = ["ap-nanjing-1", "ap-nanjing-2", "ap-nanjing-3"]
+  tke_endpoint_az         = "ap-nanjing-3"
+  tke_instance_type       = "S6.LARGE8"
+
 
   # frontend
   clb_master_zone_id      = "ap-nanjing-1"

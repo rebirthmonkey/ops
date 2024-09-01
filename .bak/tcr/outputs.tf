@@ -1,8 +1,8 @@
 output "tcr_id" {
-  value =local.tcr_id
+  value = tencentcloud_tcr_instance.foo.id
 }
 output "tcr_name" {
-  value = local.tcr_name
+  value = local.name
 }
 output "user_name" {
   value = tencentcloud_tcr_token.my_token.user_name

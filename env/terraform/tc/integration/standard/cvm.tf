@@ -10,10 +10,11 @@ locals {
 module "cvm" {
   source            = "../../modules/cvm"
   availability_zone = local.availability_zones[0]
-  project_id        = local.project_id
+  project_id        = var.project_id
   tags              = local.tags
 
-  security_group_ids= [module.security_group.id]
+#   security_group_ids= [module.security_group.id]
+  security_group_ids= [local.default_sg_id]
   vpc_id            = module.network.vpc_id
   subnet_id         = module.network.subnet_id[0]
 

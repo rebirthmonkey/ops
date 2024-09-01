@@ -74,6 +74,11 @@ variable "db_password" {
   default = ""
 }
 
+variable "db_name" {
+  type    = string
+  default = ""
+}
+
 variable "cdb_availability_zone" {
   type    = string
   default = ""
@@ -93,6 +98,68 @@ variable "redis_availability_zone" {
 variable "redis_replica_zone_names" {
   type    = list(string)
   default = []
+}
+
+# tcr
+variable "tcr_availability_zone" {
+  type    = string
+  default = ""
+}
+
+variable "tcr_name" {
+  type    = string
+  default = ""
+}
+
+variable "tcr_create" {
+  type = bool
+  default = true
+}
+
+# tke
+variable "node_cidrs" {
+  type    = list(string)
+  default = []
+}
+
+variable "node_azs" {
+  type    = list(string)
+  default = []
+}
+
+variable "pod_cidrs" {
+  type    = list(string)
+  default = []
+}
+
+variable "pod_azs" {
+  type    = list(string)
+  default = []
+}
+
+variable "tke_endpoint_az" {
+  type    = string
+  default = ""
+}
+
+variable "tke_instance_type" {
+  type    = string
+  default = ""
+}
+
+# variable "tke_system_disk_type" {
+#   type    = string
+#   default = ""
+# }
+
+# variable "tke_create_cam_strategy" {
+#   type    = bool
+#   default = true
+# }
+
+variable "tke_enable_logging" {
+  type    = bool
+  default = false
 }
 
 # frontend
