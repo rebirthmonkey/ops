@@ -1,0 +1,85 @@
+#!/bin/bash
+
+COS_BUCKET=${COS_BUCKET}
+COS_REGION=${COS_REGION}
+COS_PATH=${COS_PATH}
+PRIVATE_DOMAIN=${PRIVATE_DOMAIN}
+DB_PASSWORD=${DB_PASSWORD}
+
+yum -y install mysql redis
+
+mkdir -p /usr/local/bin/app1/configs
+
+wget "https://$COS_BUCKET.cos.$COS_REGION.myqcloud.com$COS_PATH/app1" -O /usr/local/bin/app1/app1
+chmod +x /usr/local/bin/app1/app1
+
+cat > /usr/local/bin/app1/configs/config.yaml <<CONFEOF
+mysql:
+  host: mysql.$PRIVATE_DOMAIN
+  port: 3306
+  user: root
+  password: $DB_PASSWORD
+  dbname: app1
+redis:
+  addr: redis.$PRIVATE_DOMAIN:6379
+  password: $DB_PASSWORD
+  db: 0
+log:
+  filePath: "/tmp/app1.log"
+CONFEOF
+
+cat >  /etc/systemd/system/app1.service <<EOF
+[Unit]
+Description=Go Application Service
+
+[Service]
+ExecStart=/bin/bash -c '/usr/local/bin/app1/app1 -c /usr/local/bin/app1/configs/config.yaml >> /tmp/app1.log 2>&1'
+WorkingDirectory=/usr/local/bin/
+User=root
+Restart=always
+Type=simple
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable app1.service
+systemctl start app1.service
+systemctl status app1.service
+
+systemctl stop app1.service
+systemctl restart app1.service
+
+mkdir -p /data
+wget "https://$COS_BUCKET.cos.$COS_REGION.myqcloud.com$COS_PATH/init.sql" -O /data/init.sql
+if ! mysql -h mysql.$PRIVATE_DOMAIN -u root -p$DB_PASSWORD -e "show databases;"  | grep app1 >> /tmp/deploy.log 2>&1
+then
+    mysql -h mysql.$PRIVATE_DOMAIN -u root -p$DB_PASSWORD  < /data/init.sql >> /tmp/deploy.log 2>&1
+fi
+redis-cli -h redis.$PRIVATE_DOMAIN -p 6379 -a $DB_PASSWORD SADD groupset group1 group2 group3 >> /tmp/deploy.log 2>&1
+
+# Download and set up node_exporter
+wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz -O /tmp/node_exporter-1.3.1.linux-amd64.tar.gz
+tar -xvf /tmp/node_exporter-1.3.1.linux-amd64.tar.gz -C /usr/local/bin/
+mv /usr/local/bin/node_exporter-1.3.1.linux-amd64 /usr/local/bin/node_exporter
+
+cat > /etc/systemd/system/node_exporter.service <<EOF
+[Unit]
+Description=Node Exporter
+
+[Service]
+ExecStart=/usr/local/bin/node_exporter/node_exporter
+User=root
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable node_exporter.service
+systemctl start node_exporter.service
+systemctl status node_exporter.service

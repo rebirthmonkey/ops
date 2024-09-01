@@ -1,0 +1,26 @@
+#!/bin/bash
+
+COS_BUCKET=${COS_BUCKET}
+COS_REGION=${COS_REGION}
+COS_PATH=${COS_PATH}
+APP1_DOMAIN=${APP1_DOMAIN}
+APP2_DOMAIN=${APP2_DOMAIN}
+
+yum -y install nginx
+
+mkdir -p /data
+mkdir -p /etc/nginx/conf.d
+mkdir -p /usr/local/bin/reactapp
+
+wget "https://$COS_BUCKET.cos.$COS_REGION.myqcloud.com$COS_PATH/reactapp.tar.gz" -O /data/reactapp.tar.gz
+tar -zxf /data/reactapp.tar.gz -C /usr/local/bin/reactapp
+wget "https://$COS_BUCKET.cos.$COS_REGION.myqcloud.com$COS_PATH/default.conf" -O /etc/nginx/conf.d/default.conf
+
+sed -i "s|https://be1.rebirthmonkey.com|http://$APP1_DOMAIN|g" /usr/local/bin/reactapp/static/js/*.js
+sed -i "s/be1.rebirthmonkey.com/$APP1_DOMAIN/g" /usr/local/bin/reactapp/static/js/*.js
+
+sed -i "s|https://app2.tamlab.net|http://$APP2_DOMAIN|g" /usr/local/bin/reactapp/static/js/*.js
+sed -i "s/app2.tamlab.net/$APP2_DOMAIN/g" /usr/local/bin/reactapp/static/js/*.js
+
+systemctl enable nginx
+systemctl start nginx
