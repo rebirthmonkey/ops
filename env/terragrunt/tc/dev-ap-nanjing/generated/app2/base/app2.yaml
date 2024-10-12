@@ -1,0 +1,164 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tam-lab-app2
+  namespace: default
+spec:
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 8080
+    - protocol: TCP
+      name: https
+      port: 443
+      targetPort: 8043
+  selector:
+    app: tam-lab-app2
+  type: LoadBalancer
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: tam-lab-app2-tls
+#  namespace: default
+#spec:
+#  ports:
+#    - protocol: TCP
+#      port: 443
+#      targetPort: 8080
+#  selector:
+#    app: tam-lab-app2
+#  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tam-lab-app2
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tam-lab-app2
+  template:
+    metadata:
+      labels:
+        app: tam-lab-app2
+    spec:
+      imagePullSecrets:
+        - name: nanjing-tamlab
+      containers:
+        - name: app2
+          image: app2:v0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 8043
+              name: https
+          volumeMounts:
+            - name: config
+              mountPath: /etc/app2
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          configMap:
+            name: tam-lab-app2
+            defaultMode: 420
+            optional: true
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tam-lab-app2
+  namespace: default
+data:
+  config.yaml: |
+    swagger:
+      enabled: true
+    database:
+      endpoint: mysql.internal.tam-lab.net
+      port: 3306
+      username: root
+      password: P@ssw0rd
+      name: app2
+      config: utf8&parseTime=True&loc=Local
+    
+    redis:
+      hostAddresses: redis.internal.tam-lab.net:6379
+      password: P@ssw0rd
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tam-lab-app2-sql-init
+  namespace: default
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS app2;
+    USE app2;
+    
+    CREATE TABLE IF NOT EXISTS user_data
+    (
+      id         INT AUTO_INCREMENT PRIMARY KEY,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      deleted_at DATETIME,
+      username   VARCHAR(255),
+      password   VARCHAR(255)
+    );
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-mysql-app2
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:5.7.36
+          volumeMounts:
+            - name: sql-init
+              mountPath: /data
+      restartPolicy: Never
+      volumes:
+        - name: sql-init
+          configMap:
+            name: tam-lab-app2-sql-init
+            defaultMode: 420
+            optional: true
+  backoffLimit: 4
+
+---
+apiVersion: v1
+stringData:
+  qcloud_cert_id: "Gvk60Wt0"
+kind: Secret
+metadata:
+  name: app2-cert
+  namespace: default
+type: Opaque
+
+
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJuYW5qaW5nLXRhbWxhYi0xLnRlbmNlbnRjbG91ZGNyLmNvbSI6IHsKCQkJImF1dGgiOiAiZEdOeUpHeGhZaTF5WldGa2IyNXNlVHBLVVZCS1JqUjRjelJpVVVOTVVWcGlUSHBwWm1KRVpGZ3dNbmQzWWtGTFZ3PT0iCgkJfQoJfSwKCSJIdHRwSGVhZGVycyI6IHsKCQkiVXNlci1BZ2VudCI6ICJEb2NrZXItQ2xpZW50LzE5LjAzLjkgKGxpbnV4KSIKCX0KfQo=
+kind: Secret
+metadata:
+  name: nanjing-tamlab
+  namespace: default
+type: kubernetes.io/dockerconfigjson

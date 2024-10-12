@@ -4,7 +4,7 @@ This project `app1` serves as one of the backends
 # Dependencies
 The project requires the following dependencies:
 - Make
-- Go (>=1.21)
+- Go (>=1.23)
 - Redis
 - MySQL
 - Docker (Optional)

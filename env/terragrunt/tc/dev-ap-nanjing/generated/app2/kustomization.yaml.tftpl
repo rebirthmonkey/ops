@@ -1,0 +1,81 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - base
+patches:
+  - target:
+      kind: Service
+      name: tam-lab-app2
+    patch: |
+      kind: Service
+      metadata:
+        name: tam-lab-app2
+        annotations:
+          service.kubernetes.io/tke-existed-lbid: ${LOAD_BALANCER_ID}
+          service.cloud.tencent.com/direct-access: "true"
+          service.cloud.tencent.com/specify-protocol: '{"443":{"protocol":["TCP_SSL"],"tls":"app2-cert"}}'
+
+
+  - target:
+      kind: Deployment
+      name: tam-lab-app2
+    patch: |
+      kind: Deployment
+      metadata:
+        name: tam-lab-app2
+      spec:
+        template:
+          spec:
+            containers:
+              - name: app2
+                image: ${REPOSITORY_ID}/${NAMESPACE}/app2:v0.0.1
+
+  - target:
+      kind: ConfigMap
+      name: tam-lab-app2
+    patch: |
+      kind: ConfigMap
+      metadata:
+        name: tam-lab-app2
+      data:
+        config.yaml: |
+          swagger:
+            enabled: true
+          database:
+            endpoint: mysql.${PRIVATE_DOMAIN}
+            port: 3306
+            username: root
+            password: ${DB_PASSWORD}
+            name: app2
+            config: utf8&parseTime=True&loc=Local
+
+          redis:
+            hostAddresses: redis.${PRIVATE_DOMAIN}:6379
+            password: ${DB_PASSWORD}
+
+  - target:
+      kind: Job
+      name: init-mysql-app2
+    patch: |
+      kind: Job
+      metadata:
+        name: init-mysql-app2
+      spec:
+        template:
+          spec:
+            containers:
+              - name: mysql
+                command:
+                  - sh
+                  - -c
+                  - |
+                    while [ 1 ];
+                    do
+                      if mysql -h mysql.${PRIVATE_DOMAIN} -u root -p${DB_PASSWORD} -e "show databases;"
+                      then
+                        mysql -h mysql.${PRIVATE_DOMAIN} -u root -p${DB_PASSWORD}  < /data/init.sql
+                        break
+                      else
+                        sleep 2
+                      fi
+                    done
